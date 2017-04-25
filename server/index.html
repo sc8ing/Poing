@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pong</title>
+	<!-- socket.io -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+</head>
+<body>
+
+	<script>
+		let socket = io();
+		let keysdown = [];
+
+		socket.on('gameStartAt', function(time) {
+			alert('game starting in ' + (time - Date.now()) / 1000 + ' seconds');
+
+			document.body.addEventListener('keyup', function(e) { sendKeypress("up", e); });
+			document.body.addEventListener('keydown', function(e) { sendKeypress("down", e); });
+
+		});
+
+		// tell server about user input
+		function sendKeypress(upordown, e) {
+			// make sure it only fires once if held down
+			if (upordown == "down") {
+				if (keysdown.indexOf(e.keyCode) > -1) return;
+				keysdown.push(e.keyCode);
+			} else keysdown.splice(keysdown.indexOf(e.keyCode), 1);
+
+			let time = Date.now();
+			let sockid = socket.id;
+			let dir;
+			if (e.keyCode == 37) dir = "left";
+			else if (e.keyCode == 39) dir = "right";
+			else return;
+			console.log('sending');
+			socket.emit('keypress', { sockid, dir, time, upordown });
+		};
+
+		// received info about another player's keypress
+		socket.on('keypress', function(data) {
+			console.log(data);
+		});
+
+	</script>
+</body>
+</html>
