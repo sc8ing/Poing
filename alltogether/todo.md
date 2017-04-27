@@ -14,9 +14,7 @@
 *todo*
 
 
-- make default options in the game core to avoid having them specified in both server and client code and making sure they match
-- change player.x/y to offsets along with a speed (+/- -> right/left)
-- default player positions, fix update function in core
-- function to calculate change in velocity depending on where it hit on the paddle
+- make default options in the game core to avoid having them specified in both server and client code and making sure they match?
+- default player positions
 - putting keys in a record corresponding to what they mean (not just #s) in client code
 

@@ -1,6 +1,3 @@
-// added score attribute to Player object
-
-
 
 // func(state) called after each update loop
 // bw & bh are board height and width (required)
@@ -13,6 +10,9 @@ function Game(func, bw, bh) {
 		ball: { r: 25, v: { x: 0, y: 75 } },
 		paddle: { length: 100, thick: 24, speed: 200 }
 	};
+	// takes the distance from center of paddle -> new x/y speed (parallel to wall)
+	// length is the length of the paddle
+	let velocityChange = (offset, length) => (offset / (length/2)) * 200;
 
 // data
 	let callbackFunc = func;
@@ -47,7 +47,7 @@ function Game(func, bw, bh) {
 			&& b.y - b.r <= lt.o + lt.length) {
 				b.x = lt.thick + b.r;
 				b.v.x *= -1;
-				//b.v.y = b.y - (lt.o + lt.length/2) add func to do this later
+				b.v.y = velocityChange(b.y - (lt.o+lt.length/2), lt.length);
 		}
 		// top paddle
 		else if (b.y-b.r < tp.thick
@@ -55,15 +55,15 @@ function Game(func, bw, bh) {
 			&& b.x-b.r <= state.board.w - tp.o) {
 				b.y = b.r + tp.thick;
 				b.v.y *= -1;
-				//b.x += tp.x_spd/2; add later (based off distance from center of paddle)
+				b.v.x = velocityChange(b.x - (tp.o+tp.length/2), tp.length);
 		}
 		//right paddle
-		else if (b.x+b.r > state.board.w-rt.thick
-			&& b.y-b.r <= state.board.h-rt.o
+		else if (b.x+b.r > state.board.w - rt.thick
+			&& b.y-b.r <= state.board.h - rt.o
 			&& b.y+b.r >= state.board.h - rt.o - rt.length) {
-				b.x = state.board.w-b.r-rt.thick;
+				b.x = state.board.w - b.r-rt.thick;
 				b.v.x *= -1;
-				//b.v.y += rt.y_spd/2;
+				b.v.y = velocityChange(b.y - (rt.o+rt.length/2), rt.length);
 		}
 		//bottom paddle
 		else if (b.y+b.r > state.board.h-bt.thick
@@ -71,7 +71,7 @@ function Game(func, bw, bh) {
 			&& b.x-b.r <= bt.o + bt.length) {
 				b.y = state.board.h - b.r - bt.h;
 				b.v.y *= -1;
-				//b.x_spd += bt.x_spd/2;
+				b.v.x = velocityChange(b.x - (bt.o+bt.length/2), bt.length);
 		}
 		
 		// scoring
