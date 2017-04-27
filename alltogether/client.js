@@ -1,12 +1,4 @@
-// ideas to add:
-//		- options (avoiding hardcoding colors, sizes, etc. in the actual code
-//			and putting them at the top somewhere easy to customize all together)
-//		- putting keys in a record corresponding to what they mean (not just #s)
-//
 // state: contains ball and players[] -- how about boundaries?
-
-
-
 
 
 function makeGame(element, width, height){
