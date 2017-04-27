@@ -1,8 +1,3 @@
-// moved resetting of ball to after it goes off the board & score events
-//
-//
-// * corner of paddle hit?
-
 // func(state) called after each update loop
 // bw & bh are board height and width (required)
 function Game(func, bw, bh) { 
