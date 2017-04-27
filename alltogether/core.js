@@ -1,9 +1,5 @@
-// changed Player object to have offset, not x & y
-// changed Player object to have length and thickness, not width & height
-// also moved this into default options
-// Player movement is 1d, so changed this to speed instead of x/y speed
-// (rewired update to work with these changes)
-// moved resetting of ball to after it goes off the board
+// moved resetting of ball to after it goes off the board & score events
+//
 //
 // * corner of paddle hit?
 
@@ -65,45 +61,58 @@ function Game(func, bw, bh) {
 			&& b.y+b.r >= state.board.h - rt.o - rt.length) {
 				b.x = state.board.w-b.r-rt.thick;
 				b.v.x *= -1;
-/****************
-				b.y_spd += rt.y_spd/2;
-			} else {
-				state.ball = startBall(bw, bh);
-			}
-
-		}  //bottom paddle
-		else if (b.y-b.r > state.board.h-bt.h && b.y+b.r < state.board.h-bt.h){
-			if (b.x-b.r >= bt.x && b.x+b.r <= bt.x+bt.w){
-				b.y = state.board.h-b.r-bt.h;
-				b.y_spd *=  -1;
-				b.x_spd += bt.x_spd/2;
-			} else {
-				state.ball = startBall(bw, bh);
-			}
+				//b.v.y += rt.y_spd/2;
+		}
+		//bottom paddle
+		else if (b.y+b.r > state.board.h-bt.thick
+			&& b.x+b.r >= bt.o
+			&& b.x-b.r <= bt.o + bt.length) {
+				b.y = state.board.h - b.r - bt.h;
+				b.v.y *= -1;
+				//b.x_spd += bt.x_spd/2;
 		}
 
 		b.x += delta * b.v.x;
 		b.y += delta * b.v.y;
 
-		state.ball = b;
-
-
-		//player update
-		for (let i=0; i<inputs.length; i++){
+	//player update
+		for (let i=0; i<inputs.length; i++) {
+			// we're looking for down/up pairs, & all downs are going to have
+			// index < that of their corresponding up, so skip the ups
+			// (they've already been done)
 			if (inputs[i].ud == "up") continue;
+
+			// check for corresponding "up" key later in the array
 			let hasUp = false;
-			for (let j=i; j<inputs.length; j++){
-				if (inputs[j].player == inputs[i].player && inputs[j].direction == inputs[i].direction && inputs[j].ud == "up"){
-					hasUp = inputs[j];
+			for (let j=i; j<inputs.length; j++) {
+				if (inputs[j].player == inputs[i].player
+					&& inputs[j].direction == inputs[i].direction
+					&& inputs[j].ud == "up")
+						hasUp = inputs[j];
+
+			// find date to move player
+				// delta (time between down & up||now for this key)
+				let dta = (hasUp ? hasUp.time : Date.now()) - inputs[i].time;
+				// don't want to incorporate the time used from this loop into the next one
+				if (!hasUp) inputs[i].time = Date.now(); 
+
+				let pl; // player
+				let comp; // side of board to check boundaries against
+				switch(inputs[j].player) { // (same as inputs[i].player)
+					case 'l': pl = state.left; comp = state.board.height; break;
+					case 'r': pl = state.right; comp = state.board.height; break;
+					case 't': pl = state.top; comp = state.board.width; break;
+					case 'b': pl = state.bottom; comp = state.board.width; break;
 				}
-				let dta;
-				if (hasUp == false){
-					dta = Date.now() - inputs[i].time;
-					inputs[i].time = Date.now();
-				} else {
-					dta = hasUp.time - inputs[i].time;
-				}
-				let pl;
+
+				// actually move (change the local state)
+				if (inputs[j].direction == "left") pl.o -= pl.speed * delta;
+				else pl.o += pl.speed * delta;
+				// and check for boundaries
+				if (pl.o < 0) pl.o = 0;
+				if (pl.o + pl.length > comp) pl.o = comp - pl.length;
+
+/*
 				if (inputs[j].player == 'l'){
 					pl = state.left;
 					if (inputs[j].direction == "left"){
@@ -185,12 +194,11 @@ function Game(func, bw, bh) {
 					}
 					state.bottom = pl;
 				}
+*/
 			}
 		}
-
 	}
-	
-		let dist = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2-x1, 2)+Math.pow(y2-y1,2));
+	let dist = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2-x1, 2)+Math.pow(y2-y1,2));
 
 
 	function initialState(bw, bh) {
