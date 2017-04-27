@@ -2,8 +2,6 @@
 	could add:
 		**A better syncing
 
-
-
 	Currently at: socks[i].on('keypress'.... (taking input from clients & buffering the game & sending to others)
 */
 
@@ -29,7 +27,7 @@ module.exports = function(socks, io) {
 			// & tell everyone else
 			socks[i].on('keypress', function(keydata) {
 				socks[i].broadcast.in(room).emit('keypress', keydata);
-				game.keypress(keydata);
+				game.move(keydata);
 			});
 		}
 
@@ -41,16 +39,16 @@ module.exports = function(socks, io) {
 	//********************************************//
 
 		function startGame() {
-			let syncStateIvl = setInterval(syncState, syncStateIvlSpeed);
 			game.start();
+			let syncStateIvl = setInterval(syncState, syncStateIvlSpeed);
 		}
 
 		// game.core.js calls the callback really fast, so just save the state
 		let storedState;
 		function storeState(state) { storedState = state; }
 
-		//**A add a time with it, so the client can calculate how old the message is
-		// straight up override the client's state (though they should agree)
+		//**A add a time with it, so the client can calculate how old the message is.
+		// override the client's state (though they should agree)
 		function syncState() {
 			io.in(room).emit('stateUpdate', storedState);
 		}
