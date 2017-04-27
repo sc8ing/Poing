@@ -1,16 +1,23 @@
+// added score attribute to Player object
+
+
+
 // func(state) called after each update loop
 // bw & bh are board height and width (required)
 function Game(func, bw, bh) { 
 // ops
 	let ops = {
-		board: { width: 500, height: 600 },
-		ball: { r: 25, v: { x: 0, y: 75 },
+		gameSpeed: 1, // how fast to set the main game loop
+		scorePauseLength: 3000, // how long to pause the game after scoring
+		board: { width: bw || 500, height: bh || 600 },
+		ball: { r: 25, v: { x: 0, y: 75 } },
 		paddle: { length: 100, thick: 24, speed: 200 }
 	};
 
 // data
 	let callbackFunc = func;
 	let state = initialState(bw, bh);
+	let mainInterval;
 	
 	// holds { player, direction, time, ud }
 	// for each input by clients
@@ -20,7 +27,7 @@ function Game(func, bw, bh) {
 	this.startGame = function() {
 		this.then = Date.now();
 		this.now = Date.now();
-		setInterval(main, 1);
+		mainInterval = setInterval(main, 1);
 	}
 
 // update
@@ -66,6 +73,12 @@ function Game(func, bw, bh) {
 				b.v.y *= -1;
 				//b.x_spd += bt.x_spd/2;
 		}
+		
+		// scoring
+		if (b.x + b.r < 0) score(state.left);
+		else if (b.x - b.r > state.board.w) score(state.right);
+		else if (b.y + b.r < 0) score(state.top);
+		else if (b.y - b.r > state.board.w) score(state.bottom);
 
 		b.x += delta * b.v.x;
 		b.y += delta * b.v.y;
@@ -214,6 +227,7 @@ function Game(func, bw, bh) {
 		this.length = ops.paddle.length;
 		this.thick = ops.paddle.thick;
 		this.speed = ops.paddle.speed;
+		this.score = 0;
 	}
 
 	function Ball(x, y) {
@@ -221,6 +235,15 @@ function Game(func, bw, bh) {
 		this.y = y;
 		this.r = ops.ball.r;
 		this.v = { x: ops.ball.v.x, y: ops.ball.v.y };
+	}
+	
+	// when the ball goes off the screen, update calls score(state.[sideOff])
+	// note this is really more like "lose()"; the game's scoring is kind of like golf's
+	function score(pl) {
+		clearInterval(mainInterval);
+		pl.score++;
+		state.ball = startBall();
+		setTimeout(() => startGame(), ops.scorePauseLength);
 	}
 
 	function main() {

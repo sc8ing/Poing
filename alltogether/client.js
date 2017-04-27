@@ -1,21 +1,16 @@
 // state: contains ball and players[] -- how about boundaries?
 
 
-function makeGame(element, width, height){
-// options
-	let ops = {
-		board: { width: 600, height: 500 } // overwritten if supplied in args
-	};
-
-	let width = width || ops.board.width;
-	let height = height || ops.board.height;
+function makeGame(element, width, height) {
 
 // external dependencies
 	// socket io cdn linked to in html file
 	let socket = io();
 
 	// create a Game (but don't start it) also linked from html file
-	let g = new Game(render, width, height);
+	let g;
+	if (width && height) g = new Game(render, width, height);
+	else g = new Game(render);
 
 // data
 	// holds l/r/t/b when server tells client what position they are
