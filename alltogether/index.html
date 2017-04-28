@@ -4,9 +4,14 @@
 	<title>Pong</title>
 	<!-- socket.io -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+	<link rel="stylesheet" href="../css/main.css"/>
+	<link href="https://fonts.googleapis.com/css?family=Orbitron:900" rel="stylesheet">
 </head>
 <body>
-
+	<div class="splash">
+		<h1>Welcome to Pong!</h1>
+		<button> PLAY</button>
+	</div>
 	<script>
 		let socket = io();
 		let keysdown = [];
