@@ -4,12 +4,22 @@
 	<title>Pong</title>
 	<!-- socket.io -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+
 	<script>var module = { exports: "ASf" }; // bogus thing so server code can be used here, too</script>
 	<script src="game.core.server.js"></script>
 	<script src="client.js"></script>
+
+	<link href="https://fonts.googleapis.com/css?family=Orbitron:900" rel="stylesheet">
+	<link rel="stylesheet" href="../css/main.css"/>
 </head>
 <body>
 	<div id="gameHook"></div>
+</head>
+<body>
+	<div class="splash">
+		<h1>Welcome to Pong!</h1>
+		<button>PLAY</button>
+	</div>
 	<script>
 		makeGame(document.getElementById("gameHook")); // if width/h are specified, need to match server
 	</script>
