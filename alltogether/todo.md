@@ -1,15 +1,9 @@
 ### Qs for muller###
 
-- this.[func] vs prototypes (startGame & move functions specifically)
-- game core file as both module for server & use on client? (exporting)
-  - load file for the module?
-
-    ​
-
 - order matters for update? balls first or paddles
 
 
-
+## currently on: "error in input processing… game core"
 
 *todo*
 
@@ -20,3 +14,8 @@
 - game over
 - game waiting to be found screen
 
+
+## todo##
+
+* width and height parameters for the game are all over the place, they should be as consolidated as possbile b/c otherwise the physics won't match up
+* state overwriting from server

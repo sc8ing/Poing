@@ -1,3 +1,4 @@
+var l = s => console.log(s);
 
 // func(state) called after each update loop
 // bw & bh are board height and width (required)
@@ -6,8 +7,8 @@ function Game(func, bw, bh) {
 	let ops = {
 		gameSpeed: 1, // how fast to set the main game loop
 		scorePauseLength: 3000, // how long to pause the game after scoring
-		board: { width: bw || 500, height: bh || 600 },
-		ball: { r: 25, v: { x: 0, y: 75 } },
+		board: { width: 500, height: 300 },
+		ball: { r: 25, v: { x: 100, y: 75 } },
 		paddle: { length: 100, thick: 24, speed: 200 }
 	};
 	// takes the distance from center of paddle -> new x/y speed (parallel to wall)
@@ -16,7 +17,7 @@ function Game(func, bw, bh) {
 
 // data
 	let callbackFunc = func;
-	let state = initialState(bw, bh);
+	let state = initialState();
 	let mainInterval;
 	
 	// holds { player, direction, time, ud }
@@ -24,14 +25,19 @@ function Game(func, bw, bh) {
 	this.inputs = []; 
 
 // start the game when called
-	this.startGame = function() {
+	this.startGame = () => {
+		console.log("starting game (Game.startGame())");
 		this.then = Date.now();
 		this.now = Date.now();
 		mainInterval = setInterval(main, 1);
-	}
+	};
+
+	let startGame = this.startGame;
 
 // update
-	function update(delta, bw, bh) {
+	let update = (delta) => {
+		if (isNaN(delta)) delta = 0; // something weird's going on
+		let inputs = this.inputs;
 		// the players' paddles
 		let lt = state.left;
 		let rt = state.right;
@@ -66,12 +72,12 @@ function Game(func, bw, bh) {
 				b.v.y = velocityChange(b.y - (rt.o+rt.length/2), rt.length);
 		}
 		//bottom paddle
-		else if (b.y+b.r > state.board.h-bt.thick
-			&& b.x+b.r >= bt.o
-			&& b.x-b.r <= bt.o + bt.length) {
-				b.y = state.board.h - b.r - bt.h;
+		else if (b.y+b.r > state.board.h-btm.thick
+			&& b.x+b.r >= btm.o
+			&& b.x-b.r <= btm.o + btm.length) {
+				b.y = state.board.h - b.r - btm.h;
 				b.v.y *= -1;
-				b.v.x = velocityChange(b.x - (bt.o+bt.length/2), bt.length);
+				b.v.x = velocityChange(b.x - (btm.o+btm.length/2), btm.length);
 		}
 		
 		// scoring
@@ -88,54 +94,70 @@ function Game(func, bw, bh) {
 			// we're looking for down/up pairs, & all downs are going to have
 			// index < that of their corresponding up, so skip the ups
 			// (they've already been done)
-			if (inputs[i].ud == "up") continue;
+			if (inputs[i].uod == "up") continue;
 
 			// check for corresponding "up" key later in the array
 			let hasUp = false;
 			for (let j=i; j<inputs.length; j++) {
 				if (inputs[j].player == inputs[i].player
-					&& inputs[j].direction == inputs[i].direction
-					&& inputs[j].ud == "up")
+					&& inputs[j].dir == inputs[i].dir
+					&& inputs[j].uod == "up") {
 						hasUp = inputs[j];
-
-			// find date to move player
-				// delta (time between down & up||now for this key)
-				let dta = (hasUp ? hasUp.time : Date.now()) - inputs[i].time;
-				// don't want to incorporate the time used from this loop into the next one
-				if (!hasUp) inputs[i].time = Date.now(); 
-
-				let pl; // player
-				let comp; // side of board to check boundaries against
-				switch(inputs[j].player) { // (same as inputs[i].player)
-					case 'l': pl = state.left; comp = state.board.height; break;
-					case 'r': pl = state.right; comp = state.board.height; break;
-					case 't': pl = state.top; comp = state.board.width; break;
-					case 'b': pl = state.bottom; comp = state.board.width; break;
+						break;
 				}
+			}
+			// delta (time between down & up||now for this key)
+			let dta = (hasUp ? hasUp.time : Date.now()) - inputs[i].time;
 
-				// actually move (change the local state)
-				if (inputs[j].direction == "left") pl.o -= pl.speed * delta;
-				else pl.o += pl.speed * delta;
-				// and check for boundaries
-				if (pl.o < 0) pl.o = 0;
-				if (pl.o + pl.length > comp) pl.o = comp - pl.length;
+			let pl; // player
+			let comp; // side of board to check boundaries against
+			switch(inputs[i].player) { // (same as inputs[j].player)
+				case 'l': pl = state.left; comp = state.board.height; break;
+				case 'r': pl = state.right; comp = state.board.height; break;
+				case 't': pl = state.top; comp = state.board.width; break;
+				case 'b': pl = state.bottom; comp = state.board.width; break;
+				default: alert("error in input processing game core"); alert(inputs[i].player);break;
+			}
+
+			// actually move (change the local state)
+			if (inputs[i].dir == "left") pl.o -= pl.speed * delta;
+			else pl.o += pl.speed * delta;
+			// and check for boundaries
+			if (pl.o < 0) pl.o = 0;
+			if (pl.o + pl.length > comp) pl.o = comp - pl.length;
+			
+			// delete used data
+			if (hasUp) {
+				console.log("processed keypress pair");
+				inputs.splice(i, 1); // delete the down
+				inputs.splice(inputs.indexOf(hasUp), 1); // and the up
+			} else {
+				inputs[i].time = Date.now();
+//				console.log("processed single key");
 			}
 		}
 	}
 	let dist = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2-x1, 2)+Math.pow(y2-y1,2));
 
 
-	function initialState(bw, bh) {
-		ball: startBall(),
-		left: new Player(bh/2-ops.paddle.length/2),
-		top: new Player(bw/2-ops.paddle.length/2),
-		right: new Player(bw/2-ops.paddle.length/2),
-		bottom: new Player(bw/2-ops.paddle.length/2),
-		board: { w: bw,  h: bh }
+	function initialState() {
+		let bw = ops.board.width;
+		let bh = ops.board.height;
+		return {
+			ball: startBall(bw/2, bh/2),
+			left: new Player(bh/2-ops.paddle.length/2),
+			top: new Player(bw/2-ops.paddle.length/2),
+			right: new Player(bw/2-ops.paddle.length/2),
+			bottom: new Player(bw/2-ops.paddle.length/2),
+			board: { w: bw,  h: bh }
+		}
 	}
 
-	function startBall() {
-		return new Ball(this.state.board.w/2, this.state.board.h/2);
+	function startBall(x, y) {
+		if (this.state)
+			return new Ball(this.state.board.w/2, this.state.board.w/2);
+		else
+			return new Ball(x, y);
 	}
 
 	function Player(o) { // o is offset (left is 0, relative to position)
@@ -156,22 +178,29 @@ function Game(func, bw, bh) {
 	// when the ball goes off the screen, update calls score(state.[sideOff])
 	// note this is really more like "lose()"; the game's scoring is kind of like golf's
 	function score(pl) {
+		console.log("goal!");
 		clearInterval(mainInterval);
 		pl.score++;
-		state.ball = startBall();
-		setTimeout(() => startGame(), ops.scorePauseLength);
+		console.log(pl, "just lost a point");
+		state.ball = new Ball(state.board.w/2, state.board.h/2);
+		setTimeout(startGame, ops.scorePauseLength);
+		console.log(state.ball);
 	}
 
-	function main() {
-		now = Date.now();
-		delta = now - then;
-		update(delta / 1000, bw, bh);
+	let main = () => {
+		this.now = Date.now();
+		delta = this.now - this.then;
+		update(delta / 1000);
 		callbackFunc(state);
-		then = now;
+		this.then = this.now;
 	}
 }
 
 // called by client/server when user input
-Game.prototype.move = function(player, direction, time, ud){
-	this.inputs.push({player, direction, time, ud});
+// keydata is a record of the form { sockid, dir, time, upordown }
+// player is l/r/t/b; dir is 'left' or 'right'; time is time pressed, uod is up or down press
+Game.prototype.move = function(player, dir, time, uod) {
+	this.inputs.push({ dir, time, uod, player });
 }
+
+module.exports = Game;

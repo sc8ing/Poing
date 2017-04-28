@@ -1,7 +1,7 @@
 // state: contains ball and players[] -- how about boundaries?
 
 
-function makeGame(element, width, height) {
+let makeGame = function(element, width, height) {
 
 // external dependencies
 	// socket io cdn linked to in html file
@@ -18,21 +18,21 @@ function makeGame(element, width, height) {
 
 // setup server listening
 	socket.on('gameStartAt', function(time) {
-		setTimeout(time-Date.now(), () => g.startGame());
+		setTimeout(() => { console.log("starting game"); g.startGame(); }, time - Date.now());
+	// setup user input listening
+		document.body.addEventListener("keydown", function(e) {sendKeyPressed("down", e)});
+		document.body.addEventListener("keyup", function(e) {sendKeyPressed("up", e)});
 	});
 
-	socket.on('playerPosition', function(position) {
+	socket.on('position', function(position) {
 		this.pos = position;
 	});
 
-// setup user input listening
-	document.body.addEventListener("keydown", function(e) {sendKeyPressed("down", e)});
-	document.body.addEventListener("keyup", function(e) {sendKeyPressed("up", e)});
 
 // create the canvas
 	let canvas = document.createElement('canvas');
-	canvas.width = width;
-	canvas.height = height;
+	canvas.width = 500;
+	canvas.height = 300;
 	element.appendChild(canvas);
 	let c = canvas.getContext("2d");
 
@@ -40,18 +40,18 @@ function makeGame(element, width, height) {
 
 // tells server and game core details of keypress event
 	function sendKeyPressed(uod, e){ // uod: key pressed or released ("up" or "down")
+		let key = e.keyCode;
+		let time = Date.now();
+		let upordown = uod;
+
 		let dir = false;
 		if (key == 38 || key == 37) dir="left";
 		else if (key == 39 || key == 40) dir="right";
 		if (!dir) return; // don't send anything if it wasn't a left or right key
 
-		let key = e.keyCode;
-		let sockid = socket.id;
-		let time = Date.now();
-		let upordown = uod;
 
 		// alerts server
-		socket.emit('keypress', {sockid, dir, time, upordown});
+		socket.emit('keypress', { dir, time, upordown});
 
 		// alerts Game
 		g.move(pos, dir, time, uod);
@@ -59,10 +59,10 @@ function makeGame(element, width, height) {
 
 // render
 	function render(state) {
-		let p1 = state.players[0];
-		let p2 = state.players[1];
-		let p3 = state.players[2];
-		let p4 = state.players[3];
+		let p1 = state.left;
+		let p2 = state.top;
+		let p3 = state.right;
+		let p4 = state.bottom;
 
 	  //canvas is just the template.
 		c.clearRect(0, 0, canvas.width, canvas.height);
@@ -72,14 +72,13 @@ function makeGame(element, width, height) {
 		c.fillStyle = 'darkslategrey';
 		c.arc(state.ball.x, state.ball.y, state.ball.r, 0, 2*Math.PI);
 		c.fill();
-		c.closePath();
 		c.strokeStyle = 'green';
 		c.stroke();
+		c.closePath();
 
 		//p1 LEFT
 		c.beginPath();
-		c.rect(p1.x, p1.y, 10, 100);
-		// c.rect(0, 100, 10, 100);
+		c.rect(0, p1.o, p1.thick, p1.length);
 		c.fillStyle = 'firebrick';
 		c.fill();
 		c.strokeStyle = 'black';
@@ -88,8 +87,7 @@ function makeGame(element, width, height) {
 
 		//p2 TOP
 		c.beginPath();
-		// c.rect(100, 0, 10, 100);
-		c.rect(p2.x,p2.y, 0, 10, 100);
+		c.rect(p2.o, 0, p2.length, p2.thick);
 		c.fillStyle = 'dodgerblue';
 		c.fill();
 		c.strokeStyle = 'black';
@@ -98,8 +96,7 @@ function makeGame(element, width, height) {
 
 		//p3 RIGHT
 		c.beginPath();
-		// c.rect(490, 100, 10, 100);
-		c.rect(p3.x,p3.y, 0, 10, 100);
+		c.rect(canvas.width, canvas.height - p3.o, -p3.thick, -p3.length);
 		c.fillStyle = 'yellow';
 		c.fill();
 		c.strokeStyle = 'black';
@@ -108,20 +105,11 @@ function makeGame(element, width, height) {
 
 		//p4 BOTTOM
 		c.beginPath();
-		// c.rect(490, 100, 10, 100);
-		c.rect(p2.x,p2.y, 0, 10, 100);
+		c.rect(p4.o, canvas.height, p4.length, -p4.thick);
 		c.fillStyle = 'orange';
 		c.fill();
 		c.strokeStyle = 'black';
 		c.stroke();
 		c.closePath();
-
-		//Mid Line
-		// c.beginPath();
-		// c.strokeStyle = 'black';
-		// c.moveTo(250,0);
-		// c.lineTo(250,300);
-		// c.stroke();
-		// c.closePath();
 	}
 }

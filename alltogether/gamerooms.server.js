@@ -2,7 +2,7 @@ let l = s => console.log(s);
 GameManager = require('./gamemanager.server.js');
 
 // how many players to start a game with
-let numPlayers = 4;
+let numPlayers = 1;
 
 module.exports = function(io) {
 	let wl = []; // essentially a queue (waitlist), used before game start to match players
@@ -27,7 +27,7 @@ module.exports = function(io) {
 	});
 
 	function startGame(socks) {
-		l("found enough players, starting new game");
+		l("found enough players, calling game manager to get stuff going");
 		let gameManager = new GameManager(socks, io);
 	}
 };
