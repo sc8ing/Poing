@@ -14,7 +14,7 @@ let makeGame = function(element, width, height) {
 
 // data
 	// holds l/r/t/b when server tells client what position they are
-	let pos;
+	this.pos;
 
 // setup server listening
 	socket.on('gameStartAt', function(time) {
@@ -24,8 +24,19 @@ let makeGame = function(element, width, height) {
 		document.body.addEventListener("keyup", function(e) {sendKeyPressed("up", e)});
 	});
 
-	socket.on('position', function(position) {
-		this.pos = position;
+	socket.on('position', position => this.pos = position);
+
+	socket.on('override', state => { g.override(state); });
+
+	socket.on('keypress', keydata => {
+		g.move(keydata.player, keydata.dir, keydata.time, keydata.upordown);
+	});
+
+	socket.on('score', (scoreData) => {
+		g.pause();
+		g.resetAfterScore();
+		g.score(scoreData.player);
+		setTimeout(scoreData.timeTillContinue, g.startGame);
 	});
 
 
@@ -49,12 +60,11 @@ let makeGame = function(element, width, height) {
 		else if (key == 39 || key == 40) dir="right";
 		if (!dir) return; // don't send anything if it wasn't a left or right key
 
-
 		// alerts server
 		socket.emit('keypress', { dir, time, upordown});
 
 		// alerts Game
-		g.move(pos, dir, time, uod);
+		g.move(this.pos, dir, time, uod);
 	}
 
 // render

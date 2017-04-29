@@ -10,8 +10,9 @@ let l = s => console.log(s);
 Game = require('./game.core.server.js');
 
 // how often to update the clients on gamestate
-let syncStateIvlSpeed = 50;
+let syncStateIvlSpeed = 100;
 let gameStartWaitTime = 1000;
+let timeTillContinue = 2000; // how long to pause between goals
 
 module.exports = function(socks, io) {
 	// setup the game (but don't start it)
@@ -34,6 +35,7 @@ module.exports = function(socks, io) {
 				game.move(keydata.player, keydata.dir, keydata.time, keydata.upordown);
 			});
 			// tell people what position they are
+			console.log("sending out position for \"" + positions[i]);
 			socks[i].emit('position', positions[i]);
 		}
 
@@ -52,12 +54,24 @@ module.exports = function(socks, io) {
 
 		// game.core.js calls the callback really fast, so just save the state
 		let storedState;
-		function storeState(state) { storedState = state; }
+		function storeState(state) {
+			storedState = state;
+			if (state.score.justScored) {
+				io.in(room).emit('score', { player: state.score.player, timeTillContinue });
+				game.pause();
+				game.resetAfterScore();
+				game.score(state.score.player);
+
+				let startTime = Date.now + timeTillContinue;
+				io.in(room).emit('gameStartAt', startTime);
+				setTimeout(startGame, startTime - Date.now());
+			}
+		}
 
 		//**A add a time with it, so the client can calculate how old the message is.
 		// override the client's state (though they should agree)
 		function syncState() {
-			io.in(room).emit('stateUpdate', storedState);
+			io.in(room).emit('override', storedState);
 		}
 };
 
