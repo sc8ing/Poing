@@ -72,7 +72,7 @@ function Game(func, bw, bh) {
 			&& b.y+b.r >= this.state.board.h - rt.o - rt.length) {
 				b.x = this.state.board.w - b.r-rt.thick;
 				b.v.x *= -1;
-				b.v.y = velocityChange(b.y - (rt.o+rt.length/2), rt.length);
+				b.v.y = velocityChange(b.y - (this.state.board.h - (rt.o+rt.length/2)), rt.length);
 		}
 		//bottom paddle
 		else if (b.y+b.r > this.state.board.h-btm.thick
@@ -98,8 +98,11 @@ function Game(func, bw, bh) {
 			// we're looking for down/up pairs, & all downs are going to have
 			// index < that of their corresponding up, so skip the ups
 			// (they've already been done)
-			if (inputs[i].uod == "up") continue;
-
+			if (inputs[i].uod == "up") {
+				if (i == 0) inputs.splice(0, 1);
+				continue
+			}
+			
 			// check for corresponding "up" key later in the array
 			let hasUp = false;
 			for (let j=i; j<inputs.length; j++) {
@@ -135,13 +138,11 @@ function Game(func, bw, bh) {
 			
 			// delete used data
 			if (hasUp) {
-				console.log("processed keypress pair");
 				inputs.splice(i, 1); // delete the down
 				inputs.splice(inputs.indexOf(hasUp), 1); // and the up
 			} else {
 				inputs[i].time = Date.now();
-				if (pastBoundary) inputs.splice(i, 1);
-//				console.log("processed single key");
+				if (pastBoundary) inputs.splice(i, 1); // otherwise it gets stuck
 			}
 		}
 	}
@@ -215,15 +216,17 @@ Game.prototype.pause = function() {
 	clearInterval(this.mainInterval);
 	this.gamePaused = true;
 }
-Game.prototype.score = function(player) {
-	switch(player) { // (same as inputs[j].player)
+Game.prototype.externalScore = function(player) {
+		switch(player) { // (same as inputs[j].player)
 		case 'l': pl = this.state.left; break;
 		case 'r': pl = this.state.right; break;
 		case 't': pl = this.state.top; break;
 		case 'b': pl = this.state.bottom; break;
 	}
-	pl.score++;
+	clearInterval(this.mainInterval);
+	this.gamePaused = true;
 	this.state.score.justScored = false;
+	pl.score++;
 }
 Game.prototype.resetAfterScore = function() {
 	this.inputs = [];
@@ -240,5 +243,6 @@ Game.prototype.move = function(player, dir, time, uod) {
 Game.prototype.override = function(state) {
 	this.state = state;
 };
+Game.prototype.logInputs = function() { console.log(this.inputs); }
 
 module.exports = Game;

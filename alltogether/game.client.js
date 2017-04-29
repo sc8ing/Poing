@@ -18,7 +18,8 @@ let makeGame = function(element, width, height) {
 
 // setup server listening
 	socket.on('gameStartAt', function(time) {
-		setTimeout(() => { console.log("starting game"); g.startGame(); }, time - Date.now());
+		console.log("received gameStartAt, starting in " + (time-Date.now())/1000 + "seconds");
+		setTimeout(() => { g.startGame(); }, time - Date.now());
 	// setup user input listening
 		document.body.addEventListener("keydown", function(e) {sendKeyPressed("down", e)});
 		document.body.addEventListener("keyup", function(e) {sendKeyPressed("up", e)});
@@ -35,7 +36,7 @@ let makeGame = function(element, width, height) {
 	socket.on('score', (scoreData) => {
 		g.pause();
 		g.resetAfterScore();
-		g.score(scoreData.player);
+		g.externalScore(scoreData.player);
 		setTimeout(scoreData.timeTillContinue, g.startGame);
 	});
 
@@ -50,7 +51,9 @@ let makeGame = function(element, width, height) {
 // **** done (wait for game start) ****
 
 // tells server and game core details of keypress event
-	function sendKeyPressed(uod, e){ // uod: key pressed or released ("up" or "down")
+	let sendKeyPressed = (uod, e) => { // uod: key pressed or released ("up" or "down")
+		/* testing */
+		if (e.keyCode == 73) g.logInputs();
 		let key = e.keyCode;
 		let time = Date.now();
 		let upordown = uod;

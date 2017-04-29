@@ -7,7 +7,7 @@
 
 
 let l = s => console.log(s);
-Game = require('./game.core.server.js');
+Game = require('./game.core.js');
 
 // how often to update the clients on gamestate
 let syncStateIvlSpeed = 100;
@@ -35,7 +35,7 @@ module.exports = function(socks, io) {
 				game.move(keydata.player, keydata.dir, keydata.time, keydata.upordown);
 			});
 			// tell people what position they are
-			console.log("sending out position for \"" + positions[i]);
+			console.log("sending out position for " + positions[i]);
 			socks[i].emit('position', positions[i]);
 		}
 
@@ -60,9 +60,9 @@ module.exports = function(socks, io) {
 				io.in(room).emit('score', { player: state.score.player, timeTillContinue });
 				game.pause();
 				game.resetAfterScore();
-				game.score(state.score.player);
+				game.externalScore(state.score.player);
 
-				let startTime = Date.now + timeTillContinue;
+				let startTime = Date.now() + timeTillContinue;
 				io.in(room).emit('gameStartAt', startTime);
 				setTimeout(startGame, startTime - Date.now());
 			}
