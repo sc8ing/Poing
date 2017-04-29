@@ -12,13 +12,17 @@
 	<link href="https://fonts.googleapis.com/css?family=Orbitron:900" rel="stylesheet">
 	<link rel="stylesheet" href="../css/main.css"/>
 </head>
+
 <body>
 	<div id="gameHook"></div>
 </head>
 <body>
 	<div class="splash">
-		<h1>Welcome to Pong!</h1>
-		<button>PLAY</button>
+		<h1>WELCOME TO PONG!</h1>
+		<img class="img" src="../css/img.png"></img>
+		<div class="row">
+			<form class="form">Enter your name: <input type="text" name="playerName"><input type="submit" value="PLAY"></form>
+		</div>
 	</div>
 	<script>
 		makeGame(document.getElementById("gameHook")); // if width/h are specified, need to match server
