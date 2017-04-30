@@ -51,7 +51,7 @@ function Game(func, bw, bh) {
 		let b = this.state.ball;
 
 		// left paddle (includes corners)
-		if (b.x-b.r < lt.thick
+		if (b.x-b.r < lt.thick && b.x > lt.thick
 			&& b.y + b.r >= lt.o
 			&& b.y - b.r <= lt.o + lt.length) {
 				b.x = lt.thick + b.r;
@@ -59,7 +59,7 @@ function Game(func, bw, bh) {
 				b.v.y = velocityChange(b.y - (lt.o+lt.length/2), lt.length);
 		}
 		// top paddle
-		else if (b.y-b.r < tp.thick
+		else if (b.y-b.r < tp.thick && b.y > tp.thick
 			&& b.x+b.r >= this.state.board.w - tp.o - tp.length
 			&& b.x-b.r <= this.state.board.w - tp.o) {
 				b.y = b.r + tp.thick;
@@ -67,7 +67,7 @@ function Game(func, bw, bh) {
 				b.v.x = velocityChange(b.x - (tp.o+tp.length/2), tp.length);
 		}
 		//right paddle
-		else if (b.x+b.r > this.state.board.w - rt.thick
+		else if (b.x+b.r > this.state.board.w - rt.thick && b.x < this.state.board.w - rt.thick
 			&& b.y-b.r <= this.state.board.h - rt.o
 			&& b.y+b.r >= this.state.board.h - rt.o - rt.length) {
 				b.x = this.state.board.w - b.r-rt.thick;
@@ -75,7 +75,7 @@ function Game(func, bw, bh) {
 				b.v.y = velocityChange(b.y - (this.state.board.h - (rt.o+rt.length/2)), rt.length);
 		}
 		//bottom paddle
-		else if (b.y+b.r > this.state.board.h-btm.thick
+		else if (b.y+b.r > this.state.board.h-btm.thick && b.y < this.state.board.h - btm.thick
 			&& b.x+b.r >= btm.o
 			&& b.x-b.r <= btm.o + btm.length) {
 				b.y = this.state.board.h - b.r - btm.thick;
