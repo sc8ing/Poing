@@ -2,24 +2,27 @@
 
 - order matters for update? balls first or paddles
 
-
   ​
 
-# currently on#
-
-todo*
+  ## todo
 
 
-- name bar looks kind of messed up when window's not huge
-- fix having to type "/index.html"
-- remove scrolling from page
-- default player positions
-- putting keys in a record corresponding to what they mean (not just #s) in client code
-- add names
-- number of players waiting for
 
+- "user experience"
 
-## todo##
+  - name bar looks kind of messed up when window's not huge
+  - remove scrolling ability from page
+- server stuff
 
-* bouncing is kind of screwed up
-* movement relays don't move accurately (override socket event is the only thing really keeping stuff synced up)
+  - fix having to type "/index.html"
+  - number of players waiting for -> client
+- game.client.js
+
+  - putting keys in a record corresponding to what they mean (not just #s) in client code
+- game.core.js
+
+  - default player positions
+  - add names
+  - bouncing is kind of screwed up sometimes
+  - movement relays don't move quite right (override socket event is the only thing really keeping stuff synced up accurately)
+
