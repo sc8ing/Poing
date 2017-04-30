@@ -18,6 +18,7 @@ let makeGame = function(element, width, height) {
 
 // setup server listening
 	socket.on('gameStartAt', function(time) {
+		clearInterval(loadingIntvl); // get rid of the waiting bubbles
 		console.log("received gameStartAt, starting in " + (time-Date.now())/1000 + "seconds");
 		setTimeout(() => { g.startGame(); }, time - Date.now());
 	// setup user input listening
@@ -47,6 +48,19 @@ let makeGame = function(element, width, height) {
 	canvas.height = 300;
 	element.appendChild(canvas);
 	let c = canvas.getContext("2d");
+
+// waiting bubbles
+	let numLoadingDots = 3;
+	let curLoadingDots = 1;
+	let loadingIntvl = setInterval(function() {
+		c.clearRect(0, 0, canvas.width, canvas.height);
+		c.font = "40px Courier";
+		c.fillStyle = "white";
+		let dots = "";
+		for (let i=0; i<curLoadingDots%(numLoadingDots+1); i++) dots += ". ";
+		c.fillText(dots, 100, 100);
+		curLoadingDots++;
+	}, 400);
 
 // **** done (wait for game start) ****
 

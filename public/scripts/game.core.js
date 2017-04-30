@@ -8,7 +8,7 @@ function Game(func, bw, bh) {
 		gameSpeed: 1, // how fast to set the main game loop
 		scorePauseLength: 3000, // how long to pause the game after scoring
 		board: { width: 500, height: 300 },
-		ball: { r: 25, v: { x: 0, y: 75 } },
+		ball: { r: 25, v: { x: 0, y: 130 } },
 		paddle: { length: 100, thick: 24, speed: 200 }
 	};
 	// takes the distance from center of paddle -> new x/y speed (parallel to wall)

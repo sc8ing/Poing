@@ -7,7 +7,7 @@
 
 
 let l = s => console.log(s);
-Game = require('./game.core.js');
+Game = require('./public/scripts/game.core.js');
 
 // how often to update the clients on gamestate
 let syncStateIvlSpeed = 100;

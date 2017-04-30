@@ -7,17 +7,19 @@
 
 # currently on#
 
-
 todo*
 
 
-- make default options in the game core to avoid having them specified in both server and client code and making sure they match?
+- name bar looks kind of messed up when window's not huge
+- fix having to type "/index.html"
+- remove scrolling from page
 - default player positions
 - putting keys in a record corresponding to what they mean (not just #s) in client code
+- add names
+- number of players waiting for
 
 
 ## todo##
 
 * bouncing is kind of screwed up
-* width and height parameters for the game are all over the place, they should be as consolidated as possbile b/c otherwise the physics won't match up
-* movement relays don't move accurately (override socket event is the only thing keeping stuff synced up)
+* movement relays don't move accurately (override socket event is the only thing really keeping stuff synced up)

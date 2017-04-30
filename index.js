@@ -6,7 +6,7 @@ let io = require('socket.io')(http);
 let gameRooms = require('./gamerooms.server.js')(io);
 
 app.get('/*', function(req, res) {
-	res.sendFile(__dirname + '/' + req.params[0]);
+	res.sendFile(__dirname + '/public/' + req.params[0]);
 //	res.sendFile(__dirname + "/index.html");
 });
 
