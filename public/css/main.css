@@ -1,5 +1,6 @@
 body{
-  background: linear-gradient(#1b3b46, 	#0b181e);
+  /*background: linear-gradient(#ea5555, 	#722525);*/
+  background-color: black;
   font-family: 'Orbitron', sans-serif;
 }
 
@@ -20,9 +21,9 @@ body{
   padding-top: 50px;
   justify-content: center;
 }
-	.splash > h1{
+	#splash > h1{
 	  color: honeydew;
-	  font-size: 50px;
+	  font-size: 55px;
 	  /*margin-bottom: 40%;*/
 	}
 
@@ -38,22 +39,22 @@ body{
   flex-direction: row;
   font-size: 30px;
   text-shadow: 10px;
+  width: 80%;
 }
 
 input[type=text]{
   margin-left: 1em;
   background-color: inherit;
   font-size: 25px;
-  width: 25em;
-  color: white;
+  width: 80%;
+  color: #00ff6b;
   border: 1px solid grey;
 }
 
 input[type=submit]{
-  height: 4em;
-  width: 8em;
+  width: 20%;
   text-align: center;
-  color: red;
+  color: white;
   background: rgba(100, 20, 102, .25);
   border-radius: 5%;
   border-style: dotted;
@@ -61,7 +62,7 @@ input[type=submit]{
 }
 
 	input[type=submit]:hover {
-	  /*background:rgba(255,255,255, .3);*/
+	  background:rgba(255,255,255, .3);
 	  color: honeydew;
 	  cursor:pointer;
 	}
