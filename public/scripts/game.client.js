@@ -49,18 +49,25 @@ let makeGame = function(element, width, height) {
 	element.appendChild(canvas);
 	let c = canvas.getContext("2d");
 
+//another load screen to replace bubbles
+let colorRotation = ["#50d0ac", "#45b495", "#39947b", "#2e7460", "#215446", "#132f27"];
+
 // waiting bubbles
-	let numLoadingDots = 3;
-	let curLoadingDots = 1;
+	let numLoadingDots = 5;
+	let x=0;
 	let loadingIntvl = setInterval(function() {
 		c.clearRect(0, 0, canvas.width, canvas.height);
 		c.font = "40px Courier";
-		c.fillStyle = "white";
 		let dots = "";
-		for (let i=0; i<curLoadingDots%(numLoadingDots+1); i++) dots += ". ";
-		c.fillText(dots, 100, 100);
-		curLoadingDots++;
-	}, 400);
+		for(let a=0; a<numLoadingDots; a++){
+			c.beginPath();
+			c.fillStyle = colorRotation[x%colorRotation.length];
+			c.arc(canvas.width/2 + (30*a), canvas.height/2, 10, 0, 2*Math.PI);
+			c.fill();
+			c.closePath();
+			x++;
+		}
+	}, 300);
 
 // **** done (wait for game start) ****
 
