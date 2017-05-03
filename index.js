@@ -9,4 +9,4 @@ app.get('/*', function(req, res) {
 	res.sendFile(__dirname + '/public/' + req.params[0] || 'index.html');
 });
 
-http.listen(3000, console.log("listening on *:" + port));
+http.listen(port, console.log("listening on *:" + port));
