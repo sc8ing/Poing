@@ -25,15 +25,11 @@ let makeGame = function(element, width, height) {
 		document.body.addEventListener("keydown", function(e) {sendKeyPressed("down", e)});
 		document.body.addEventListener("keyup", function(e) {sendKeyPressed("up", e)});
 	});
-
 	socket.on('position', position => this.pos = position);
-
 	socket.on('override', state => { g.override(state); });
-
 	socket.on('keypress', keydata => {
 		g.move(keydata.player, keydata.dir, keydata.time, keydata.upordown);
 	});
-
 	socket.on('score', (scoreData) => {
 		g.pause();
 		g.resetAfterScore();
@@ -100,6 +96,14 @@ let colorRotation = ["#50d0ac", "#45b495", "#39947b", "#2e7460", "#215446", "#13
 
 	  //canvas is just the template.
 		c.clearRect(0, 0, canvas.width, canvas.height);
+
+		// paint the scores
+		c.fillStyle = "white";
+		c.font = "20px Times";
+		c.fillText(p1.score, 50, canvas.height/2);
+		c.fillText(p2.score, canvas.width/2, 50);
+		c.fillText(p3.score, canvas.width - 50, canvas.height/2);
+		c.fillText(p4.score, canvas.width/2, canvas.height - 50);
 
 		//Ball
 		c.beginPath();
