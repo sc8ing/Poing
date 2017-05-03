@@ -9,9 +9,8 @@
 let l = s => console.log(s);
 Game = require('./public/scripts/game.core.js');
 
-// how often to update the clients on gamestate
-let syncStateIvlSpeed = 100;
-let gameStartWaitTime = 1000;
+let syncStateIvlSpeed = 100; // how often to update the clients on gamestate
+let gameStartWaitTime = 1000; // how far into the future to wait before start (to stay synced)
 let timeTillContinue = 2000; // how long to pause between goals
 
 module.exports = function(socks, io) {

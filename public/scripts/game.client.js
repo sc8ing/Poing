@@ -15,6 +15,7 @@ let makeGame = function(element, width, height) {
 // data
 	// holds l/r/t/b when server tells client what position they are
 	this.pos;
+	let keys = { left: [38, 37], right: [39, 40] };
 
 // setup server listening
 	socket.on('gameStartAt', function(time) {
@@ -69,15 +70,13 @@ let colorRotation = ["#50d0ac", "#45b495", "#39947b", "#2e7460", "#215446", "#13
 
 // tells server and game core details of keypress event
 	let sendKeyPressed = (uod, e) => { // uod: key pressed or released ("up" or "down")
-		/* testing */
-		if (e.keyCode == 73) g.logInputs();
 		let key = e.keyCode;
 		let time = Date.now();
 		let upordown = uod;
 
 		let dir = false;
-		if (key == 38 || key == 37) dir="left";
-		else if (key == 39 || key == 40) dir="right";
+		if (keys.left.indexOf(key) >= 0) dir = "left";
+		else if (keys.right.indexOf(key) >= 0) dir = "right";
 		if (!dir) return; // don't send anything if it wasn't a left or right key
 
 		// alerts server

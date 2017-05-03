@@ -32,7 +32,7 @@ function Game(func, bw, bh) {
 		this.gamePaused = false;
 		this.then = Date.now();
 		this.now = Date.now();
-		this.mainInterval = setInterval(main, 1);
+		this.mainInterval = setInterval(main, ops.gameSpeed);
 	};
 
 	let startGame = this.startGame;
