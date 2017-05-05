@@ -60,7 +60,7 @@ function Game(func, bw, bh) {
 		}
 		// top paddle
 		else if (b.y-b.r < tp.thick && b.y > tp.thick
-			&& b.x+b.r >= tp.o - tp.length
+			&& b.x+b.r >= this.state.board.w - tp.o - tp.length
 			&& b.x-b.r <= this.state.board.w - tp.o) {
 				b.y = b.r + tp.thick;
 				b.v.y *= -1;
