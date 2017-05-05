@@ -124,7 +124,7 @@ let colorRotation = ["#50d0ac", "#45b495", "#39947b", "#2e7460", "#215446", "#13
 
 		//p2 TOP
 		c.beginPath();
-		c.rect(p2.o, 0, p2.length, p2.thick);
+		c.rect(canvas.width - p2.o - p2.length, 0, p2.length, p2.thick);
 		c.fillStyle = 'dodgerblue';
 		c.fill();
 		c.strokeStyle = 'black';
