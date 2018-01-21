@@ -1,16 +1,10 @@
-### Qs for muller###
-
-- order matters for update? balls first or paddles
-
-  ​
-
-  ## todo
-
+## todo
 
 
 - "user experience"
 
   - remove scrolling ability from page
+- update balls first or paddles?
 - server stuff
 
   - number of players waiting for -> client
