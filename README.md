@@ -1,5 +1,5 @@
 # Pong
-A four-player online pong game built using node, express, and socket.io. Made as a group project for a webapps class.
+A four-player online pong game built using node, express, and socket.io.
 
 ## Setup:
 
